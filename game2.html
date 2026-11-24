@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Whack-a-Mole | Break Time Games</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav aria-label="Main menu">
+    <a href="index.html">Home</a>
+    <a href="game1.html">Tic-Tac-Toe</a>
+    <a href="game2.html" aria-current="page">Whack-a-Mole</a>
+    <a href="quiz.html">Player Survey</a>
+  </nav>
+
+  <main>
+    <h1>Whack-a-Mole</h1>
+    <p>Click a mole 🐹 to earn 1 point. A carrot 🥕 costs 1 point. Your score cannot go below 0.</p>
+    <p>Score: <strong id="moleScore">0</strong> &nbsp; Time left: <strong id="moleTime">20</strong> seconds</p>
+    <div id="holes" role="group" aria-label="Nine holes"></div>
+    <p><button id="moleStart" type="button" onclick="startGame()">Start Game</button></p>
+    <p id="moleMessage" role="status">Press Start to play.</p>
+  </main>
+  <script>
+    const holes = [];
+    const clock = document.getElementById("moleTime");
+    const scoreText = document.getElementById("moleScore");
+    const message = document.getElementById("moleMessage");
+    const startButton = document.getElementById("moleStart");
+    let score = 0;
+    let endTime = 0;
+    let timeLeft = 0;
+    let timer = null;
+
+    for (let i = 0; i < 9; i++) {
+      const hole = document.createElement("button");
+      hole.type = "button";
+      hole.onclick = function () {
+        hit(hole);
+      };
+      document.getElementById("holes").appendChild(hole);
+      holes.push(hole);
+    }
+
+    function clearHoles() {
+      for (let i = 0; i < holes.length; i++) {
+        holes[i].textContent = "";
+        holes[i].disabled = true;
+        holes[i].setAttribute("aria-label", "Empty hole " + (i + 1));
+      }
+    }
+
+    function showTarget() {
+      const index = Math.floor(Math.random() * holes.length);
+      const hole = holes[index];
+      if (Math.random() < 0.8) {
+        hole.textContent = "🐹";
+        hole.setAttribute("aria-label", "Mole in hole " + (index + 1));
+      } else {
+        hole.textContent = "🥕";
+        hole.setAttribute("aria-label", "Carrot in hole " + (index + 1));
+      }
+      hole.disabled = false;
+    }
+
+    function secondsLeft() {
+      return Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+    }
+
+    function updateGame() {
+      if (timer === null) return;
+      const seconds = secondsLeft();
+      if (seconds === timeLeft) return;
+
+      timeLeft = seconds;
+      clock.textContent = timeLeft;
+      clearHoles();
+      if (timeLeft > 0) {
+        showTarget();
+      } else {
+        clearInterval(timer);
+        timer = null;
+        message.textContent = "Time's up! Your score is " + score + ".";
+        startButton.textContent = "Play Again";
+      }
+    }
+
+    function hit(hole) {
+      if (timer === null || hole.disabled) return;
+      if (secondsLeft() !== timeLeft) {
+        updateGame();
+        return;
+      }
+      if (hole.textContent === "🐹") {
+        score++;
+      } else if (score > 0) {
+        score--;
+      }
+      scoreText.textContent = score;
+      clearHoles();
+    }
+
+    function startGame() {
+      clearInterval(timer);
+      score = 0;
+      scoreText.textContent = score;
+      timeLeft = -1;
+      endTime = Date.now() + 20000;
+      message.textContent = "Round started!";
+      startButton.textContent = "Restart Game";
+      timer = setInterval(updateGame, 100);
+      updateGame();
+    }
+
+    clearHoles();
+  </script>
+</body>
+</html>

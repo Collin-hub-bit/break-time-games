@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tic-Tac-Toe | Break Time Games</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav aria-label="Main menu">
+    <a href="index.html">Home</a>
+    <a href="game1.html" aria-current="page">Tic-Tac-Toe</a>
+    <a href="game2.html">Whack-a-Mole</a>
+    <a href="quiz.html">Player Survey</a>
+  </nav>
+
+  <main>
+    <h1>Tic-Tac-Toe</h1>
+    <p>X goes first. Get three across, down, or diagonally to win.</p>
+    <p id="message" role="status">X's turn</p>
+
+    <div id="board" role="group" aria-label="Game board"></div>
+
+    <p><button id="restart" onclick="newGame()">Restart game</button></p>
+    <label><input type="checkbox" id="cornerLock" onchange="newGame()"> Corner Lock</label>
+    <small>Fill two corners to open the middle.</small>
+    <p id="score">X wins: 0 · O wins: 0 · Draws: 0</p>
+  </main>
+  <script>
+    const boxes = [];
+    const board = document.getElementById("board");
+    for (let i = 0; i < 9; i++) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.onclick = function () {
+        play(i);
+      };
+      board.appendChild(button);
+      boxes.push(button);
+    }
+    const message = document.getElementById("message");
+    const wins = {X: 0, O: 0, draw: 0};
+    let player, moves, corners;
+
+    // Squares go from 0 to 8, one row at a time.
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
+
+    function setBox(index, text) {
+      const box = boxes[index];
+      box.textContent = text;
+      box.className = text;
+      box.disabled = text !== "";
+      box.setAttribute("aria-label", "Square " + (index + 1) + ", " + (text || "empty"));
+    }
+
+    function newGame() {
+      player = "X";
+      moves = 0;
+      corners = 0;
+      for (let i = 0; i < 9; i++) {
+        setBox(i, "");
+      }
+      if (document.getElementById("cornerLock").checked) {
+        setBox(4, "Locked");
+      }
+      message.textContent = "X's turn";
+    }
+
+    function hasWon() {
+      let won = false;
+      for (const line of lines) {
+        if (boxes[line[0]].textContent === player &&
+            boxes[line[1]].textContent === player &&
+            boxes[line[2]].textContent === player) {
+          for (const index of line) {
+            boxes[index].classList.add("win");
+          }
+          won = true;
+        }
+      }
+      return won;
+    }
+
+    function play(index) {
+      if (boxes[index].disabled) return;
+      setBox(index, player);
+      moves++;
+
+      if ([0, 2, 6, 8].includes(index)) corners++;
+      if (corners === 2 && boxes[4].textContent === "Locked") {
+        setBox(4, "");
+      }
+
+      if (hasWon()) {
+        message.textContent = player + " wins!";
+        wins[player]++;
+      } else if (moves === 9) {
+        message.textContent = "It's a draw!";
+        wins.draw++;
+      } else {
+        if (player === "X") {
+          player = "O";
+        } else {
+          player = "X";
+        }
+        message.textContent = player + "'s turn";
+        return;
+      }
+
+      // The round is over. Keep the score for the next game.
+      for (const box of boxes) box.disabled = true;
+      document.getElementById("score").textContent =
+        "X wins: " + wins.X + " · O wins: " + wins.O + " · Draws: " + wins.draw;
+    }
+
+    newGame();
+  </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Player Survey | Break Time Games</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav aria-label="Main menu">
+    <a href="index.html">Home</a>
+    <a href="game1.html">Tic-Tac-Toe</a>
+    <a href="game2.html">Whack-a-Mole</a>
+    <a href="quiz.html" aria-current="page">Player Survey</a>
+  </nav>
+
+  <main>
+    <h1>Player Survey</h1>
+    <p>How much do you like a challenge? Pick the answers that sound like you.</p>
+
+    <form id="playerSurvey" onsubmit="showResult(event)" oninput="clearResult()" onreset="clearResult()">
+      <p>
+        <label for="rounds">1. You have time for two more rounds. How many would you play?</label><br>
+        <input id="rounds" name="rounds" type="number" min="0" max="2" step="1" required> (0 to 2)
+      </p>
+
+      <fieldset>
+        <legend>2. Would you play Tic-Tac-Toe against someone who usually beats you?</legend>
+        <label><input type="radio" name="opponent" value="0" required> No</label>
+        <label><input type="radio" name="opponent" value="1"> Maybe</label>
+        <label><input type="radio" name="opponent" value="2"> Yes</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Would you try Corner Lock for your next round?</legend>
+        <label><input type="radio" name="corner" value="0" required> No</label>
+        <label><input type="radio" name="corner" value="1"> Maybe</label>
+        <label><input type="radio" name="corner" value="2"> Yes</label>
+      </fieldset>
+
+      <p>
+        <label for="target">4. How often would you set a target score in Whack-a-Mole?</label><br>
+        <select id="target" name="target" required>
+          <option value="">Choose one</option>
+          <option value="0">Never</option>
+          <option value="1">Sometimes</option>
+          <option value="2">Every round</option>
+        </select>
+      </p>
+
+      <p>
+        <label for="rematch">5. You finish one point below your best mole score. What would you do?</label><br>
+        <select id="rematch" name="rematch" required>
+          <option value="">Choose one</option>
+          <option value="0">Finish for today</option>
+          <option value="1">Try again some other time</option>
+          <option value="2">Play again right now</option>
+        </select>
+      </p>
+
+      <fieldset>
+        <legend>6. Which challenges would you try? Tick any, or leave blank.</legend>
+        <label><input type="checkbox" name="challenge" value="diagonal"> Win with a diagonal line</label><br>
+        <label><input type="checkbox" name="challenge" value="carrots"> Finish a round without clicking a carrot</label><br>
+        <label><input type="checkbox" name="challenge" value="record"> Beat a friend's mole score</label>
+      </fieldset>
+
+      <p>Question 1 uses the number you enter. For questions 2–5, the choices earn 0, 1 or 2 points in order. Each box in question 6 earns 1 point, up to 2 points.</p>
+      <button type="submit">See my result</button>
+      <button type="reset">Clear answers</button>
+    </form>
+    <p id="surveyResult" role="status"></p>
+  </main>
+  <script>
+    function clearResult() {
+      document.getElementById("surveyResult").textContent = "";
+    }
+
+    function showResult(event) {
+      event.preventDefault();
+      const answers = document.getElementById("playerSurvey").elements;
+      let score = Number(answers.rounds.value);
+      const questions = ["opponent", "corner", "target", "rematch"];
+      for (const name of questions) {
+        score += Number(answers[name].value);
+      }
+
+      const checks = document.querySelectorAll('input[name="challenge"]:checked');
+      score += Math.min(checks.length, 2);
+
+      let result = "You like a relaxed round at your own pace.";
+      if (score >= 9) {
+        result = "You enjoy harder rounds and trying to beat a score.";
+      } else if (score >= 5) {
+        result = "You enjoy a mix of easy rounds and small challenges.";
+      }
+      document.getElementById("surveyResult").textContent = "Your score: " + score + "/12. " + result;
+    }
+  </script>
+</body>
+</html>

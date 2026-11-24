@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Break Time Games</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav aria-label="Main menu">
+    <a href="index.html" aria-current="page">Home</a>
+    <a href="game1.html">Tic-Tac-Toe</a>
+    <a href="game2.html">Whack-a-Mole</a>
+    <a href="quiz.html">Player Survey</a>
+  </nav>
+
+  <main class="home">
+    <h1>Break Time Games</h1>
+    <p>We're Collin and Loi. For our project, we each picked a game to play during a break.</p>
+
+    <div class="games" id="games"></div>
+    <p class="after-games">Played both games? <a href="quiz.html">Take the player survey</a>.</p>
+  </main>
+
+  <script>
+    const games = document.getElementById("games");
+
+    function addGame(title, page, picture, alt, credit, rules) {
+      const card = document.createElement("section");
+      card.innerHTML = `
+        <h2>${title}</h2>
+        <figure>
+          <img src="${picture}" alt="${alt}">
+          <figcaption>${credit}</figcaption>
+        </figure>
+        <p>${rules}</p>
+        <a href="${page}">Play ${title}</a>
+      `;
+      games.appendChild(card);
+    }
+
+    addGame(
+      "Tic-Tac-Toe", "game1.html", "images/tic-tac-toe-photo.jpg",
+      "A tic-tac-toe board with red X pieces and black O pieces.",
+      "Collin suggested Tic-Tac-Toe for our project. Take turns placing X and O with a friend. Three in a row wins. In Corner Lock mode, fill two corners before playing in the middle."
+    );
+
+    addGame(
+      "Whack-a-Mole", "game2.html", "images/whack-a-mole-example.jpg",
+      "A cartoon mole in a mining helmet peeks out of the right-hand hole in the grass.",
+      "Loi suggested Whack-a-Mole. You have 20 seconds to click as many moles as you can. A mole earns you a point, but clicking a carrot costs you one."
+    );
+  </script>
+</body>
+</html>
